@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}All Bookings{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h2>🎟️ All Movie Bookings</h2>
+
+    {% if bookings %}
+    <table class="booking-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Movie</th>
+                <th>People</th>
+                <th>Payment</th>
+                <th>Seats</th>
+                <th>Vehicle</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking['id'] }}</td>
+                <td>{{ booking['movie'] }}</td>
+                <td>{{ booking['people'] }}</td>
+                <td>{{ booking['payment'] }}</td>
+                <td>{{ booking['seats'] }}</td>
+                <td>{{ booking['vehicle'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No bookings found.</p>
+    {% endif %}
+
+    <div class="form-actions">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Home</a>
+    </div>
+</section>
+{% endblock %}

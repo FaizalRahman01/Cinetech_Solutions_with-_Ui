@@ -47,16 +47,16 @@ def initialize_database():
             
             if count == 0:
                 employees = [
-                    ("Shivam Kumar", "Plot No. 12, MG Road, Mumbai, India", 72000, 34, "Manager"),
-                    ("Junaid Ali", "Banjara Hills, Hyderabad, India", 68000, 31, "Assistant Manager"),
-                    ("Aharnish Dhaw Kumar", "Sector 18, Noida, Uttar Pradesh, India", 64000, 36, "Project Lead"),
-                    ("Daya Shankar", "BTM Layout, Bengaluru, Karnataka, India", 60000, 29, "Senior Developer"),
-                    ("Amar Kumar", "Ashok Nagar, Patna, Bihar, India", 57000, 32, "Developer"),
-                    ("Shahnawaz Akthar", "Rajbagh, Srinagar, J&K, India", 53000, 28, "Junior Developer"),
-                    ("Prem Kumar Yadav", "Harmu Colony, Ranchi, Jharkhand, India", 50000, 30, "Designer"),
-                    ("Sameer Ahmad", "Park Street, Kolkata, West Bengal, India", 46000, 27, "Marketing Specialist"),
-                    ("Rahul Kumar", "Gomti Nagar, Lucknow, Uttar Pradesh, India", 42000, 26, "Sales Associate"),
-                    ("Sumit Kumar", "Sector 22, Chandigarh, India", 39000, 25, "Customer Support")
+                    ("Shivam Kumar", "Plot No. 12, MG Road, Mumbai, India", 720, 34, "Manager"),
+                    ("Junaid Ali", "Banjara Hills, Hyderabad, India", 600, 31, "Assistant Manager"),
+                    ("Aharnish Dhaw Kumar", "Sector 18, Noida, Uttar Pradesh, India", 600, 36, "Project Lead"),
+                    ("Daya Shankar", "BTM Layout, Bengaluru, Karnataka, India", 600, 29, "Senior Developer"),
+                    ("Amar Kumar", "Ashok Nagar, Patna, Bihar, India", 570, 32, "Developer"),
+                    ("Shahnawaz Akthar", "Rajbagh, Srinagar, J&K, India", 500, 28, "Junior Developer"),
+                    ("Prem Kumar Yadav", "Harmu Colony, Ranchi, Jharkhand, India", 500, 30, "Designer"),
+                    ("Sameer Ahmad", "Park Street, Kolkata, West Bengal, India", 460, 27, "Marketing Specialist"),
+                    ("Rahul Kumar", "Gomti Nagar, Lucknow, Uttar Pradesh, India", 420, 26, "Sales Associate"),
+                    ("Sumit Kumar", "Sector 22, Chandigarh, India", 390, 25, "Customer Support")
                 ]
                 
                 cursor.executemany('''
@@ -92,3 +92,6 @@ def initialize_database():
 
 # Initialize the database when this module is imported
 initialize_database()
+# This module initializes the database and creates necessary tables.
+# It also pre-populates the employees table with 10 sample employees.
+# The finance table is initialized with a default balance and pin.      

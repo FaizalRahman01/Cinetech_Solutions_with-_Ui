@@ -1,7 +1,7 @@
 /* Base Styles */
 :root {
     --primary-color: #3498db;
-    --secondary-color: #2ecc71;
+    --secondary-color: #2dc66d;
     --danger-color: #e74c3c;
     --dark-color: #2c3e50;
     --light-color: #ecf0f1;
@@ -203,7 +203,7 @@ nav a i {
 }
 
 .btn-primary:hover {
-    background-color: #2980b9;
+    background-color: #2d99cb;
 }
 
 .btn-secondary {
@@ -524,6 +524,7 @@ footer {
     /* background-image: "images/Ticketqr.png"; */
       background-color: #abe9f4;
     border-radius: 8px;
+    height: 350px;
     margin-bottom: 1rem;
 }
 
@@ -535,6 +536,9 @@ footer {
 .vehicle-image img {
     width: 150px;
     margin-top: 1rem;
+    position: relative;
+    left: 45%;
+    bottom: 350px;
 }
 
 .form-group input, .form-group select {
@@ -576,3 +580,46 @@ footer {
         cursor: not-allowed;
         pointer-events: none;
     }
+    .booking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.booking-table th, .booking-table td {
+    border: 1px solid #444;
+    padding: 10px;
+    text-align: center;
+}
+
+.booking-table th {
+    background-color: #1f1f1f;
+}
+
+.booking-table tr:nth-child(even) {
+    background-color: #2c2c2c;
+}
+
+.card h2 {
+    color:#3498db;
+}
+#qrImage {
+     position: absolute; /* ya fixed, agar poore screen pe fixed chahiye */
+    left: 80%;  /* right se 20px ka gap */
+    bottom: 30%;
+}
+/* Add this in your CSS file or <style> tag */
+.movie-card.selected {
+    border: 2px solid #0d6efd;
+    box-shadow: 0 0 10px #0d6efd44;
+    background: #eaf4ff;
+    transition: 0.2s;
+}
+#poster_oo {
+    max-width: 150px;
+    border-radius: 50%;
+    position: relative;
+    left: 27%;
+    bottom: 300px;
+
+}

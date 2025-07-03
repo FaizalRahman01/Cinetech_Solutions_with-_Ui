@@ -22,8 +22,17 @@
         {% if price %}
             <div class="result success">
                 <i class="fas fa-check-circle"></i>
-                <strong>{{ price.type }}: ${{ price.amount }}</strong>
+                <strong>
+                    {% if price.is_error %}
+                        <span style="color: red;">
+                            {{ price.type }}: {{ price.amount }}
+                        </span>
+                    {% else %}
+                        {{ price.type }}: {{ price.amount }}
+                    {% endif %}
+                </strong>
             </div>
         {% endif %}
     </section>
+
 {% endblock %}

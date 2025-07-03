@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 import pandas as pd
-from database import create_connection
 from types import SimpleNamespace
+from database import create_connection
+import random, datetime
 
 app = Flask(__name__)
 app.secret_key = 'R22CA1CA0067-Faizal_Rahman'
@@ -26,13 +27,17 @@ def ticket():
             if age <= 0:
                 flash('Invalid age. Please enter a positive number.', 'error')
             elif age <= 12:
-                price = {'type': 'Child Ticket', 'amount': 5}
-            elif age <= 18:
-                price = {'type': 'Teenager Ticket', 'amount': 8}
-            elif age <= 60:
-                price = {'type': 'Adult Ticket', 'amount': 12}
-            else:
-                price = {'type': 'Senior Citizen Ticket', 'amount': 7}
+                price = {'type': 'Child Ticket $', 'amount': 5}
+            elif age <= 18 or age <= 21:
+                price = {'type': 'Teenager Ticket $', 'amount': 8}
+            elif age >= 22:
+             price = {
+                'type': 'Your ticket is not booked because you are above 21',
+                 'amount': '\nYou are not eligible to book a ticket, please go to Movie Ticket Section',
+                  'is_error': True    }
+            print(price['type'])
+            print(price['amount'])
+            rice = {'type': 'Senior Citizen Ticket', 'amount': 7}
         except ValueError:
             flash('Invalid input. Please enter a valid number.', 'error')
 
@@ -42,44 +47,84 @@ def ticket():
 def book():
     vehicle = None
     vehicle_image = None
-    if request.method == 'POST':
-        movie = request.form['movie']
-        people = int(request.form['people'])
-        payment = request.form['payment']
-        seats = request.form['seats']
-
-        if people == 1 or people == 2:
-            vehicle = 'Bike'
-            vehicle_image = url_for('static', filename='images/bike.png')
-        elif people == 3:
-            vehicle = 'Auto'
-            vehicle_image = url_for('static', filename='images/auto.png')
-        elif people == 4:
-            vehicle = 'Taxi'
-            vehicle_image = url_for('static', filename='images/taxi.png')
-        else:
-            vehicle = 'Bus'
-            vehicle_image = url_for('static', filename='images/bus.png')
-
-        session['ticket_info'] = {
-            'movie': movie,
-            'people': people,
-            'payment': payment,
-            'seats': seats,
-            'vehicle': vehicle
-        }
-
-        return redirect(url_for('ticket_summary'))
-
+    total_price = 0  # New line: Initialize total price
+    # Sample movie data - POST aur GET dono me use hoga, isliye yeh if block ke pehle hi hona chahiye
     movies = [
         {'name': 'Housefull 5', 'time': '11:00 AM - 02:00 PM', 'poster': url_for('static', filename='images/movie1.png')},
         {'name': 'Avatar The Way of Water', 'time': '2:30 PM - 06:30 PM', 'poster': url_for('static', filename='images/movie2.png')},
         {'name': 'Sitaare Zameen Par', 'time': '7:00 PM - 10:00 PM', 'poster': url_for('static', filename='images/movie3.png')}
     ]
 
+    if request.method == 'POST':
+        movie = request.form['movie']
+        people = int(request.form['people'])
+        payment = request.form['payment']
+        seats = request.form['seats']  # e.g., "A5,B7"
+        booking_id = random.randint(100000, 999999)
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # Vehicle logic as before
+        if people == 1:
+            vehicle = 'Bike1'
+            vehicle_image = url_for('static', filename='images/bike1.png')
+        elif  people == 2:
+            vehicle = 'Bike'
+            vehicle_image = url_for('static', filename='images/bike.png')
+        elif people == 3:
+            vehicle = 'Auto'
+            vehicle_image = url_for('static', filename='images/auto.png')
+        elif people == 4 or people == 5:
+            vehicle = 'Taxi'
+            vehicle_image = url_for('static', filename='images/taxi.png')
+        elif people == 6 or people == 7:
+            vehicle = 'scorpio'
+            vehicle_image = url_for('static', filename='images/scorpio.png')
+        else:
+            vehicle = 'Bus'
+            vehicle_image = url_for('static', filename='images/bus.png')
+
+        # Calculate ticket price
+        total_price = 0
+        seat_list = seats.split(',')
+        for seat in seat_list:
+            seat_row = seat.strip()[0].upper()  # Get first character of seat, uppercase
+            if seat_row == 'A':
+                total_price += 230
+            elif seat_row in ['B', 'C', 'D', 'E']:
+                total_price += 260
+            elif seat_row in ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'M']:
+                total_price += 300
+            else:
+                total_price += 230  # fallback for unexpected rows
+
+        # Store all details including price
+        session['ticket_info'] = {
+            'movie': movie,
+            'people': people,
+            'payment': payment,
+            'seats': seats,
+            'vehicle': vehicle,
+            'price': total_price,         # ✅ add total price
+            'booking_id': booking_id,     # ✅ Booking ID
+            'timestamp': timestamp,       # ✅ Timestamp
+            'poster': '',                 # ✅ Poster placeholder
+            'time': ''                    # ✅ Show time placeholder
+        }
+
+        # ✅ Loop sirf POST ke andar chalega
+        for m in movies:
+            if m['name'] == movie:
+                session['ticket_info']['poster'] = m['poster']
+                session['ticket_info']['time'] = m['time']
+                break
+
+        return redirect(url_for('ticket_summary'))
+
+    # GET request ke liye default vehicle image
+    vehicle_image = None
+
     return render_template('book.html', movies=movies, vehicle_image=vehicle_image)
 
-from types import SimpleNamespace
 
 @app.route('/ticket_summary')
 def ticket_summary():
@@ -87,11 +132,8 @@ def ticket_summary():
     if not ticket_info:
         return redirect(url_for('book'))
 
-    # Convert dict to object
     ticket_info = SimpleNamespace(**ticket_info)
-
     return render_template('ticket_summary.html', ticket_info=ticket_info)
-
 
 @app.route('/finance', methods=['GET', 'POST'])
 def finance():
@@ -280,7 +322,13 @@ def sales():
                            high_value=high_value,
                            total_revenue=total_revenue)
 
-# 🎬 Export Bookings
+@app.route('/view_bookings')
+def view_bookings():
+    conn = get_db_connection()
+    bookings = conn.execute('SELECT * FROM bookings').fetchall()
+    conn.close()
+    return render_template('view_bookings.html', bookings=bookings)
+
 @app.route('/export_bookings')
 def export_bookings():
     conn = get_db_connection()
@@ -293,7 +341,6 @@ def export_bookings():
     conn.close()
     return f'<a href="/{file_path}" download>Download Bookings Excel</a>'
 
-# 🎓 Export Students
 @app.route('/export_students')
 def export_students():
     conn = get_db_connection()
@@ -306,7 +353,6 @@ def export_students():
     conn.close()
     return f'<a href="/{file_path}" download>Download Students Excel</a>'
 
-# 💰 Export Sales Data
 @app.route('/export_sales')
 def export_sales():
     sales_data = [200, 450, 700, 150, 900, 100, 220, 600, 450]

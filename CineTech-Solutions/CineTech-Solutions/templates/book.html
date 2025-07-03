@@ -25,19 +25,74 @@
             <input type="number" id="people" name="people" required min="1" oninput="showSeatSelection()">
         </div>
 
+        <!-- 🔥 New Seat Layout Section Added Here 🔥 -->
+        <div id="seatSection" style="display: none;">
+            <div class="form-group">
+                <label>Select Seats:</label>
+                <div class="seat-layout">
+
+                    <!-- Section 1 (Normal ₹230) -->
+                    <h3>Rs. 230 NORMAL</h3>
+                    <!-- Row A -->
+                    <div class="row">
+                        <span class="row-label">A</span>
+                        {% for seat in range(1, 14) %}
+                            <button type="button" class="seat" data-seat="A{{ seat }}">A{{ seat }}</button>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Section 2 (EXECUTIVE ₹260) -->
+                    <h3>Rs. 260 EXECUTIVE</h3>
+                    {% for row in ['B', 'C', 'D', 'E'] %}
+                        <div class="row">
+                            <span class="row-label">{{ row }}</span>
+                            {% for seat in range(1, 14) %}
+                                <button type="button" class="seat" data-seat="{{ row }}{{ seat }}">{{ row }}{{ seat }}</button>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    <!-- Section 3 (Premium ₹300) -->
+                    <h3>Rs. 300 PREMIUM</h3>
+                    {% for row in ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'] %}
+                        <div class="row">
+                            <span class="row-label">{{ row }}</span>
+
+                            <!-- Left Side Seats -->
+                            {% for seat in range(1, 4) %}
+                                <button type="button" class="seat" data-seat="{{ row }}{{ seat }}">{{ row }}{{ seat }}</button>
+                            {% endfor %}
+
+                            <span class="gap"></span>
+
+                            <!-- Right Side Seats -->
+                            {% for seat in range(4, 17) %}
+                                <button type="button" class="seat" data-seat="{{ row }}{{ seat }}">{{ row }}{{ seat }}</button>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- Hidden input to pass selected seats to backend -->
+                <input type="hidden" id="selectedSeats" name="seats" required>
+            </div>
+        </div>
+
+        <!-- 🔥 Tumhara Old Layout Bhi As it is hai 🔥 -->
         <!-- Seat Section Initially Hidden -->
         <div id="seatSection" style="display: none;">
             <div class="form-group">
                 <label>Select Seats:</label>
                 <div class="seat-layout">
 
-                    <!-- Rows from A to J -->
-                    {% for row in ['A', 'B', 'C', 'D', 'E','G','H','I','J'] %}
+                    <!-- Rows from A to Q -->
+                    {% for row in ['A', 'B', 'C', 'D', 'E', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'] %}
                         <div class="row">
                             <span class="row-label">{{ row }}</span> <!-- Row label: A, B, C, etc. -->
 
-                            <!-- Seats 1 to 10 in each row -->
-                            {% for seat in range(1, 11) %}
+                            <!-- Seats 1 to 25 in each row -->
+                            {% for seat in range(1, 26) %}
                                 <!-- Example: You can mark seats as sold using this condition -->
                                 {% if row == 'A' and seat == 2 %}
                                     <button type="button" class="seat sold">{{ row }}{{ seat }}</button>
@@ -58,15 +113,16 @@
         <div class="form-group">
             <label for="payment">Payment Method:</label>
             <select id="payment" name="payment" required onchange="toggleQRCode()">
-                <option value="UPI">UPI</option>
+                
                 <option value="Credit Card">Credit Card</option>
+                <option value="UPI">UPI</option>
                 <option value="Cash">Cash</option>
             </select>
 
-<div id="qrImg" style="display: none;">
-    <img src="{{ url_for('static', filename='images/barcode.png') }}" alt="{{ Qr }}" style="width: 100%; height: auto;">
-    <p>UPI id: cinetechmovieplex@okkci</p>
-</div>
+            <div id="qrImg" style="display: none;">
+                <img src="{{ url_for('static', filename='images/barcode.png') }}" alt="{{ Qr }}" style="width: 100%; height: auto;">
+                <p>UPI id: cinetechmovieplex@okkci</p>
+            </div>
         </div>
 
         <div class="form-actions">
@@ -74,6 +130,7 @@
             <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Home</a>
         </div>
     </form>
+
     <script>
         function toggleQRCode() {
             const payment_method = document.getElementById('payment').value;
@@ -81,11 +138,19 @@
 
             if (payment_method === 'UPI') {
                 qrImage.style.display = 'block';
-            } else{
-                qrImage.style.display= 'none';
+            } else {
+                qrImage.style.display = 'none';
             }
         }
-
+        // Highlight selected movie card
+    document.querySelectorAll('.movie-card input[type="radio"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.movie-card').forEach(function(card) {
+                card.classList.remove('selected');
+            });
+            this.closest('.movie-card').classList.add('selected');
+        });
+    });
     </script>
 </section>
 {% endblock %}
