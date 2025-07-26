@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Book Tickets{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h2><i class="fas fa-film"></i> Book Your Movie Tickets</h2>
+
+    <form method="POST" class="form" onsubmit="return validateBookingForm()">
+        <div class="movies-grid">
+            {% for movie in movies %}
+                <label class="movie-card">
+                   <input type="radio" name="movie" value="{{ movie.name }}">
+                    <img src="{{ movie.poster }}" alt="{{ movie.name }}">
+                    <div class="movie-info">
+                        <h3>{{ movie.name }}</h3>
+                        <p>Show Time: {{ movie.time }}</p>
+                    </div>
+                </label>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label for="people">Number of People:</label>
+           <input type="number" id="people" name="people" required min="1" max="250" oninput="checkPeopleLimit(); showSeatSelection()">
+        </div>
+
+        <!-- 🔥 New Seat Layout Section Added Here 🔥 -->
+        <div id="seatSection" style="display: none;">
+            <div class="form-group">
+                <label>Select Seats:</label>
+                <div class="seat-layout">
+
+                    <!-- Section 1 (Normal ₹230) -->
+                    <h3>Rs. 230 NORMAL</h3>
+                    <!-- Row A -->
+                    <div class="row">
+                        <span class="row-label">A</span>
+                        {% for seat in range(1, 14) %}
+                            <button type="button" class="seat" data-seat="A{{ seat }}">A{{ seat }}</button>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Section 2 (EXECUTIVE ₹260) -->
+                    <h3>Rs. 260 EXECUTIVE</h3>
+                    {% for row in ['B', 'C', 'D', 'E'] %}
+                        <div class="row">
+                            <span class="row-label">{{ row }}</span>
+                            {% for seat in range(1, 14) %}
+                                <button type="button" class="seat" data-seat="{{ row }}{{ seat }}">{{ row }}{{ seat }}</button>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    <!-- Section 3 (Premium ₹300) -->
+                    <h3>Rs. 300 PREMIUM</h3>
+                    {% for row in ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'] %}
+                        <div class="row">
+                            <span class="row-label">{{ row }}</span>
+
+                            <!-- Left Side Seats -->
+                            {% for seat in range(1, 4) %}
+                                <button type="button" class="seat" data-seat="{{ row }}{{ seat }}">{{ row }}{{ seat }}</button>
+                            {% endfor %}
+
+                            <span class="gap"></span>
+
+                            <!-- Right Side Seats -->
+                            {% for seat in range(4, 17) %}
+                                <button type="button" class="seat" data-seat="{{ row }}{{ seat }}">{{ row }}{{ seat }}</button>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- Hidden input to pass selected seats to backend -->
+                <input type="hidden" id="selectedSeats" name="seats" required>
+            </div>
+        </div>
+
+        <!-- 🔥 Tumhara Old Layout Bhi As it is hai 🔥 -->
+        <!-- Seat Section Initially Hidden -->
+        <div id="seatSection" style="display: none;">
+            <div class="form-group">
+                <label>Select Seats:</label>
+                <div class="seat-layout">
+
+                    <!-- Rows from A to Q -->
+                    {% for row in ['A', 'B', 'C', 'D', 'E', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'] %}
+                        <div class="row">
+                            <span class="row-label">{{ row }}</span> <!-- Row label: A, B, C, etc. -->
+
+                            <!-- Seats 1 to 25 in each row -->
+                            {% for seat in range(1, 26) %}
+                                <!-- Example: You can mark seats as sold using this condition -->
+                                {% if row == 'A' and seat == 2 %}
+                                    <button type="button" class="seat sold">{{ row }}{{ seat }}</button>
+                                {% else %}
+                                    <button type="button" class="seat" data-seat="{{ row }}{{ seat }}">{{ row }}{{ seat }}</button>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- Hidden input to pass selected seats to backend -->
+                <input type="hidden" id="selectedSeats" name="seats" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="payment">Payment Method:</label>
+            <select id="payment" name="payment" required onchange="toggleQRCode()">
+                
+                <option value="Credit Card">Credit Card</option>
+                <option value="UPI">UPI</option>
+                <option value="Cash">Cash</option>
+            </select>
+
+            <div id="qrImg" style="display: none;">
+                <img src="{{ url_for('static', filename='images/barcode.png') }}" alt="{{ Qr }}" style="width: 100%; height: auto;">
+                <p>UPI id: cinetechmovieplex@okkci</p>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Book Tickets</button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </form>
+
+    <script>
+function toggleQRCode() {
+    const payment_method = document.getElementById('payment').value;
+    const qrImage = document.getElementById('qrImg');
+    if (payment_method === 'UPI') {
+        qrImage.style.display = 'block';
+    } else {
+        qrImage.style.display = 'none';
+    }
+}
+
+// Highlight selected movie card
+document.querySelectorAll('.movie-card input[type="radio"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.movie-card').forEach(function(card) {
+            card.classList.remove('selected');
+        });
+        this.closest('.movie-card').classList.add('selected');
+    });
+});
+
+function checkPeopleLimit() {
+    const peopleInput = document.getElementById('people');
+    if (peopleInput.value > 250) {
+        alert("You cannot select more than 250 people!");
+        peopleInput.value = 250;
+    }
+}
+
+// Show seat selection section when people count is entered
+function validateBookingForm() {
+    // Check if any movie radio is selected
+    const movieRadios = document.querySelectorAll('input[name="movie"]');
+    let movieSelected = false;
+    movieRadios.forEach(radio => {
+        if (radio.checked) movieSelected = true;
+    });
+    if (!movieSelected) {
+        alert("Please select a movie before booking!");
+        return false; // Prevent form submit
+    }
+    return true; // Allow form submit
+    
+}
+function validateBookingForm() {
+    // Movie selection check
+    const movieRadios = document.querySelectorAll('input[name="movie"]');
+    let movieSelected = false;
+    movieRadios.forEach(radio => {
+        if (radio.checked) movieSelected = true;
+    });
+    if (!movieSelected) {
+        alert("Please select a movie before booking!");
+        return false;
+    }
+
+    // People and seat selection check
+    const peopleInput = document.getElementById('people');
+    const peopleCount = parseInt(peopleInput.value, 10);
+    const selectedSeats = document.querySelectorAll('.seat.selected');
+    if (selectedSeats.length !== peopleCount) {
+        alert(`Please select exactly ${peopleCount} seat(s)!`);
+        return false;
+    }
+
+    // Selected seats ko hidden input me set karo (backend ke liye)
+    const selectedSeatsInput = document.getElementById('selectedSeats');
+    selectedSeatsInput.value = Array.from(selectedSeats).map(btn => btn.getAttribute('data-seat')).join(',');
+
+    return true;
+}
+</script>
+</section>
+{% endblock %}
