@@ -1,44 +1,44 @@
-# 🎬 Cinetech – Multiplex Management System
+# Cinetech – Multiplex Management System
 
 **Developed as a final-year capstone project**, *Cinetech* is a Flask-based web application that simulates a real-world multiplex environment. The system offers features like movie ticket booking, finance simulation, student performance management, sales analysis, and employee dashboards — all through a centralized and secure interface.
 
 ---
 
-## 📌 Features
+##  Features
 
-### 1. 🎟️ Movie Ticket Booking
+### 1.  Movie Ticket Booking
 - Select movie, showtime, and seat layout.
 - Seat-based dynamic pricing.
 - Automatic vehicle suggestion based on group size.
 - Booking ID generation and summary dashboard.
 
-### 2. 🔐 Finance Management Module
+### 2.  Finance Management Module
 - Virtual ATM-like simulation.
 - PIN-protected interface for secure transactions.
 - Balance tracking, deposits, and withdrawals.
 
-### 3. 🎓 Student Record System
+### 3.  Student Record System
 - Add, search, and analyze student grades.
 - Grade validation with average percentage calculation.
 - Export records in Excel format.
 
-### 4. 👥 Employee Salary Dashboard
+### 4.  Employee Salary Dashboard
 - View employee data sorted by salary.
 - 10% salary hike preview without database modification.
 
-### 5. 📊 Sales Analysis
+### 5.  Sales Analysis
 - Analyze dummy sales data with 10% tax calculation.
 - Identify high-value transactions.
 - Exportable Excel reports with categorized data.
 
-### 6. 📁 Admin Tools
+### 6.  Admin Tools
 - View all bookings from the database.
 - One-click export of bookings, students, and sales reports (`.xlsx`).
 - Flash messaging for user feedback and alerts.
 
 ---
 
-## 🧰 Tech Stack
+##  Tech Stack
 
 | Layer           | Tools Used                                |
 |----------------|--------------------------------------------|
